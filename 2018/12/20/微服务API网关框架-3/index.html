@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword" content="">
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <title>
+        
+          微服务API网关框架(3)--Lua基本语法 - Nebula-X | 星云数联
+        
+    </title>
+
+    <link rel="canonical" href="https://www.nebula-x.cn/2018/12/20/微服务API网关框架-3/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('Demo.png')
+            /*post*/
+        
+    }
+    
+    #signature{
+        background-image: url('/img/signature/nebula-white.png');
+    }
+    
+</style>
+
+<header class="intro-header">
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#微服务API网关" title="微服务API网关">微服务API网关</a>
+                            
+                        </div>
+                        <h1>微服务API网关框架(3)--Lua基本语法</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by 招景滔 on
+                            2018-12-20
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">星云数联</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">关于我</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">归档</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">书签</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <h1><span id="lua基本语法">Lua基本语法</span></h1>
+<h3><span id="编程模式">编程模式</span></h3>
+<pre><code>1. 交互式编程 (shell)
+    与python的shell使用方法一致，直接在终端下运行lua命令即可
+2. 脚本式编程
+    创建xxxx.lua文件，然后使用lua xxxx.lua命令或者是luajit xxxx.lua文件即可进行运行
+</code></pre>
+<h3><span id="注释">注释</span></h3>
+<pre><code>1.单行注释
+    --
+2.多行注释
+    --[[
+    多行注释
+    多行注释
+    --]]   
+</code></pre>
+<h3><span id="标示符">标示符</span></h3>
+<pre><code>Lua 是一个区分大小写的编程语言
+Lua 标示符用于定义一个变量，函数获取其他用户定义的项。标示符以一个字母 A 到 Z 或 a 到 z 或下划线 _ 开头后加上0个或多个字母，下划线，数字(0到9)
+Lua 不允许使用特殊字符如 @, $, 和 % 来定义标示符
+最好不要使用下划线加大写字母的标示符，因为Lua的保留字也是这样的
+一般约定，以下划线开头连接一串大写字母的名字（比如 _VERSION）被保留用于 Lua 内部全局变量
+</code></pre>
+<h3><span id="关键词">关键词</span></h3>
+<pre><code>and    break    do    else
+elseif    end    false    for
+function    if    in    local
+nil    not    or    repeat
+return    then    true    until
+while
+</code></pre>
+<h4><span id="return-和-break-关键字">return 和 break 关键字</span></h4>
+<pre><code>1）break
+语句 break 用来终止 while、repeat 和 for 三种循环的执行，并跳出当前循环体， 继续执行当前循环之后的语句。下面举一个 while 循环中的 break 的例子来说明：
+-- 计算最小的x,使从1到x的所有数相加和大于100
+sum = 0
+i = 1
+while true do
+    sum = sum + i
+    if sum &gt; 100 then
+        break
+    end
+    i = i + 1
+end
+print(&quot;The result is &quot; .. i)  --&gt;output:The result is 14
+在实际应用中，break 经常用于嵌套循环中。
+
+2）return
+  return 主要用于从函数中返回结果，或者用于简单的结束一个函数的执行。 
+  return 只能写在语句块的最后，一旦执行了 return语句，该语句之后的所有语句都不会再执行。
+
+  执行return方法，如果实在主函数体里面，不在语句块中；执行return  且没有返回值，之后的语句照样会执行
+
+
+  若要写在函数中间，则只能写在一个显式的语句块内，参见示例代码：
+
+local function add(x, y)
+    return x + y
+end
+
+local function is_positive(x)
+    if x &gt; 0 then
+        return x .. &quot; is &gt; 0&quot;
+    else
+        return x .. &quot; is not &gt; 0&quot;
+    end
+
+    print(&quot;function end!&quot;)
+end
+
+--由于return只出现在前面显式的语句块，所以此语句不注释也不会报错
+--，但是不会被执行，此处不会产生输出
+
+
+sum = add(10, 20)
+print(&quot;The sum is &quot; .. sum)  --&gt;output:The sum is 30
+answer = is_positive(-10)
+print(answer)                --&gt;output:-10 is is not &gt; 0
+
+### (重点)Return的重点特性
+有时候，为了调试方便，我们可以想在某个函数的中间提前 return，以进行控制流的短路。此时我们可以将 return 放在一个 do ... end 代码块中，例如：
+
+local function add(x, y)
+    print(1)
+    return
+    print(2)
+end
+--return 不放在语句块中，return 也没有返回值，不注释该语句，不会报错; 但会执行return之后的业务
+
+local function add(x, y)
+    print(1)
+    do return end
+    print(2)
+end
+</code></pre>
+<h3><span id="变量">变量</span></h3>
+<pre><code>Lua 变量有三种类型：全局变量、局部变量、表中的域
+变量在使用前，必须在代码中进行声明，即创建该变量
+变量的默认值均为 nil。
+
+1.全局变量
+    (1)在默认情况下，变量总是认为是全局的。
+    (2)全局变量不需要声明，给一个变量赋值后即创建了这个全局变量，访问一个没有初始化的全局变量也不会出错，只不过得到的结果是：nil。
+    (3)如果你想删除一个全局变量，只需要将变量赋值为nil。
+    (4)Lua 中的变量全是全局变量，那怕是语句块或是函数里，除非用 local 显式声明为局部变量。
+    (5)其实本质上也是一个table，它把我们创建的全局变量都保存到一个table里了
+        而这个table的名字是：_G
+        -- 定义一个全局变量
+        gName = &quot;我是个全局变量&quot;;
+        -- 用三种方式输出变量的值
+        print(gName);
+        print(_G[&quot;gName&quot;]);
+        print(_G.gName);
+2.局部变量
+    局部变量的作用域为从声明位置开始到所在语句块结束。
+3.表中的域
+4.虚变量 (&quot;_&quot;)
+    当一个方法返回多个值时，有些返回值有时候用不到，要是声明很多变量来一一接收，显然不太合适（不是不能）。
+    Lua 提供了一个虚变量，以单个下划线（“_”）来命名，用它来丢弃不需要的数值，仅仅起到占位的作用。
+    
+    local start, finish = string.find(&quot;hello&quot;, &quot;he&quot;) --start 值为起始下标，finish
+                                                     --值为结束下标
+    print ( start, finish )                          --输出 1   2
+    local start = string.find(&quot;hello&quot;, &quot;he&quot;)      -- start值为起始下标
+    print ( start )                               -- 输出 1        
+    local _,finish = string.find(&quot;hello&quot;, &quot;he&quot;)   --采用虚变量（即下划线），接收起
+                                                  --始下标值，然后丢弃，finish接收
+                                                  --结束下标值
+    print ( finish )                              --输出 2       
+    代码倒数第二行，定义了一个用 local 修饰的 虚变量（即 单个下划线）。使用这个虚变量接收 string.find() 第一个返回值，静默丢掉，这样就直接得到第二个返回值了。
+    虚变量不仅仅可以被用在返回值，还可以用在迭代等。
+    
+    local t = {1, 3, 5}
+    print(&quot;all  data:&quot;)
+    for i,v in ipairs(t) do
+        print(i,v)
+    end
+    print(&quot;&quot;)
+    print(&quot;part data:&quot;)
+    for _,v in ipairs(t) do
+        print(v)
+    end
+    
+    执行结果：
+    # luajit test.lua
+    all  data:
+    1   1
+    2   3
+    3   5
+    
+    part data:
+    1
+    3
+    5
+</code></pre>
+<h4><span id="赋值">赋值</span></h4>
+<pre><code>1. 使用&quot;=&quot;号进行赋值
+2. Lua可以对多个变量同时赋值，变量列表和值列表的各个元素用逗号分开，赋值语句右边的值会依次赋给左边的变量
+    a,b=21,22
+3. 赋值语句Lua会先计算右边所有的值然后再执行赋值操作，所以我们可以这样进行交换变量的值
+    x, y = y, x                     -- swap 'x' for 'y'
+    a[i], a[j] = a[j], a[i]         -- swap 'a[i]' for 'a[j]'  
+4. 重点: 当变量个数和值的个数不一致时，Lua会一直以变量个数为基础采取以下策略
+    a. 变量个数 &gt; 值的个数             按变量个数补足nil
+    b. 变量个数 &lt; 值的个数             多余的值会被忽略
+    
+    a, b, c = 0, 1
+    print(a,b,c)             --&gt; 0   1   nil  
+    
+    a, b = a+1, b+1, b+2     -- value of b+2 is ignored
+    print(a,b)               --&gt; 1   2
+    
+    a, b, c = 0
+    print(a,b,c)             --&gt; 0   nil   nil
+5. 多值赋值经常用来交换变量，或将函数调用返回给变量
+       a, b = f()
+       f()返回两个值，第一个赋给a，第二个赋给b。
+       应该尽可能的使用局部变量，有两个好处：
+           1. 避免命名冲突。
+           2. 访问局部变量的速度比全局变量更快。
+</code></pre>
+<h3><span id="数据类型">数据类型</span></h3>
+<pre><code>Lua是动态类型语言，变量不要类型定义,只需要为变量赋值。 值可以存储在变量中，作为参数传递或结果返回。
+Lua中有8个基本类型分别为：nil、boolean、number、string、userdata、function、thread和table。
+
+数据类型	描述
+nil	            这个最简单，只有值nil属于该类，表示一个无效值（在条件表达式中相当于false）。
+boolean	        包含两个值：false和true。Lua认为false和nil为&quot;假&quot;,其他任何值都是&quot;真&quot;,包括0
+number	        表示双精度类型的实浮点数
+string	        字符串由一对双引号或单引号来表示
+function	    由 C 或 Lua 编写的函数
+userdata	    表示任意存储在变量中的C数据结构
+thread	        表示执行的独立线路，用于执行协同程序
+table	        Lua 中的表（table）其实是一个&quot;关联数组&quot;（associative arrays），数组的索引可以是数字或者是字符串。在 Lua 里，table 的创建是通过&quot;构造表达式&quot;来完成，最简单构造表达式是{}，用来创建一个空表。
+</code></pre>
+<h4><span id="获取数据的类型">获取数据的类型</span></h4>
+<pre><code>重点: type(xxx) -- 返回的都是字符串形式的数据类型
+      type(type(xxx)) == &quot;string&quot;
+
+print(type(&quot;Hello world&quot;))      --&gt; string      
+print(type(10.4*3))             --&gt; number
+print(type(print))              --&gt; function
+print(type(type))               --&gt; function
+print(type(true))               --&gt; boolean
+print(type(nil))                --&gt; nil
+print(type(type(X)))            --&gt; string
+</code></pre>
+<h4><span id="获取当前变量的数据类型是否与设想的一致">获取当前变量的数据类型是否与设想的一致</span></h4>
+<pre><code>v = &quot;Hello World.&quot;
+if type(v) == &quot;string&quot;
+then
+    print(&quot;字符串类型&quot;)
+end
+</code></pre>
+<h4><span id="nil-空值">nil (空值)</span></h4>
+<pre><code>nil 类型表示一种没有任何有效值，它只有一个值 -- nil
+作用:对于全局变量和 table，nil 还有一个&quot;删除&quot;作用，给全局变量或者 table 表里的变量赋一个 nil 值，等同于把它们删掉
+   
+    例子:
+        tab1 = { key1 = &quot;val1&quot;, key2 = &quot;val2&quot;, &quot;val3&quot; }
+        for k, v in pairs(tab1) do
+            print(k .. &quot; - &quot; .. v)
+        end
+         
+        tab1.key1 = nil
+        for k, v in pairs(tab1) do
+            print(k .. &quot; - &quot; .. v)
+        end
+</code></pre>
+<h4><span id="boolean布尔值">boolean(布尔值)</span></h4>
+<pre><code>boolean 类型只有两个可选值：true（真） 和 false（假），Lua 把 false 和 nil 看作是&quot;假&quot;，其他的都为&quot;真&quot;,包括&quot;0&quot;也是真
+</code></pre>
+<h4><span id="number数字">number(数字)</span></h4>
+<pre><code>Lua 默认只有一种 number 类型 -- double（双精度）类型（默认类型可以修改 luaconf.h 里的定义）
+</code></pre>
+<h4><span id="string字符串">string(字符串)</span></h4>
+<pre><code>1. 字符串由一对双引号或单引号来表示。
+    string1 = &quot;this is string1&quot;
+    string2 = 'this is string2'
+2. 两个方括号 &quot;[[]]&quot; 来表示&quot;一块&quot;字符串,用于多行文本 
+    html = [[
+    &lt;html&gt;
+    &lt;head&gt;&lt;/head&gt;
+    &lt;body&gt;
+        &lt;a href=&quot;http://www.runoob.com/&quot;&gt;菜鸟教程&lt;/a&gt;
+    &lt;/body&gt;
+    &lt;/html&gt;
+    ]]
+3. 在对一个数字字符串上进行算术操作时，Lua 会尝试将这个数字字符串转成一个数字
+    &gt; print(&quot;2&quot; + 6)
+    8.0
+    &gt; print(&quot;2&quot; + &quot;6&quot;)
+    8.0
+    &gt; print(&quot;2 + 6&quot;)
+    2 + 6
+    &gt; print(&quot;-2e2&quot; * &quot;6&quot;)
+    -1200.0
+4. 字符串连接符&quot;..&quot;
+     &gt; print(&quot;a&quot; .. 'b')
+     ab
+     &gt; print(157 .. 428)
+     157428
+     &gt; 
+5. 计算字符串长度
+     &gt; len = &quot;www.runoob.com&quot;
+     &gt; print(#len)
+     14
+     &gt; print(#&quot;www.runoob.com&quot;)
+     14
+</code></pre>
+<h5><span id="字符串用法拓展">字符串用法拓展</span></h5>
+<pre><code>1. 常规的转义符号
+    \a  响铃(BEL)
+    \b  退格(BS) ，将当前位置移到前一列
+    \f  换页(FF)，将当前位置移到下页开头
+    \n  换行(LF) ，将当前位置移到下一行开头
+    \r  回车(CR) ，将当前位置移到本行开头
+    \t  水平制表(HT) （跳到下一个TAB位置）
+    \v  垂直制表(VT)
+    \\  代表一个反斜线字符''\'
+    \'  代表一个单引号（撇号）字符
+    \&quot;  代表一个双引号字符
+    \0  空字符(NULL)
+    \ddd    1到3位八进制数所代表的任意字符
+    \xhh    1到2位十六进制所代表的任意字符
+
+2. 字符串操作
+    (1)string.upper(argument):字符串全部转为大写字母  
+    (2)string.lower(argument):字符串全部转为小写字母
+    (3)string.gsub(mainString,findString,replaceString,num):在字符串中替换,mainString为要替换的字符串， findString 为被替换的字符，replaceString 要替换的字符，num 替换次数（可以忽略，则全部替换）
+        &gt; string.gsub(&quot;aaaa&quot;,&quot;a&quot;,&quot;z&quot;,3);
+        zzza    3
+    (4)string.find (str, substr, [init, [end]]):在一个指定的目标字符串中搜索指定的内容(第三个参数为索引),返回其具体位置。不存在则返回 nil
+        &gt; string.find(&quot;Hello Lua user&quot;, &quot;Lua&quot;, 1) 
+        7    9
+    (5)string.reverse(arg):字符串反转    
+    (6)string.format(...):返回一个类似printf的格式化字符串
+        &gt; string.format(&quot;the value is:%d&quot;,4)
+        the value is:4
+    (7)string.char(arg) 和 string.byte(arg[,int]): char 将整型数字转成字符并连接， byte 转换字符为整数值(可以指定某个字符，默认第一个字符)。
+        &gt; string.char(97,98,99,100)
+        abcd
+        &gt; string.byte(&quot;ABCD&quot;,4)
+        68
+        &gt; string.byte(&quot;ABCD&quot;)
+        65
+    (8)string.len(arg):计算字符串长度。
+    (9)string.rep(string, n):返回字符串string的n个拷贝
+    (10)&quot;..&quot; 符号: 链接两个字符串
+    (11)string.gmatch(str, pattern):回一个迭代器函数，每一次调用这个函数，返回一个在字符串 str 找到的下一个符合 pattern 描述的子串。如果参数 pattern 描述的字符串没有找到，迭代函数返回nil。
+        &gt; for word in string.gmatch(&quot;Hello Lua user&quot;, &quot;%a+&quot;) do print(word) end
+        Hello
+        Lua
+        user
+    (12)string.match(str, pattern, init):string.match()只寻找源字串str中的第一个配对. 参数init可选, 指定搜寻过程的起点, 默认为1。 
+                                        在成功配对时, 函数将返回配对表达式中的所有捕获结果; 如果没有设置捕获标记, 则返回整个配对字符串. 当没有成功的配对时, 返回nil。
+         &gt; = string.match(&quot;I have 2 questions for you.&quot;, &quot;%d+ %a+&quot;)
+         2 questions
+         &gt; = string.format(&quot;%d, %q&quot;, string.match(&quot;I have 2 questions for you.&quot;, &quot;(%d+) (%a+)&quot;))
+         2, &quot;questions&quot;  
+3.字符串格式化         
+     Lua 提供了 string.format() 函数来生成具有特定格式的字符串, 函数的第一个参数是格式 , 之后是对应格式中每个代号的各种数据。
+        %c - 接受一个数字, 并将其转化为ASCII码表中对应的字符
+        %d, %i - 接受一个数字并将其转化为有符号的整数格式
+        %o - 接受一个数字并将其转化为八进制数格式
+        %u - 接受一个数字并将其转化为无符号整数格式
+        %x - 接受一个数字并将其转化为十六进制数格式, 使用小写字母
+        %X - 接受一个数字并将其转化为十六进制数格式, 使用大写字母
+        %e - 接受一个数字并将其转化为科学记数法格式, 使用小写字母e
+        %E - 接受一个数字并将其转化为科学记数法格式, 使用大写字母E
+        %f - 接受一个数字并将其转化为浮点数格式
+        %g(%G) - 接受一个数字并将其转化为%e(%E, 对应%G)及%f中较短的一种格式
+        %q - 接受一个字符串并将其转化为可安全被Lua编译器读入的格式
+        %s - 接受一个字符串并按照给定的参数格式化该字符串
+     为进一步细化格式, 可以在%号后添加参数. 参数将以如下的顺序读入:
+        (1) 符号: 一个+号表示其后的数字转义符将让正数显示正号. 默认情况下只有负数显示符号.
+        (2) 占位符: 一个0, 在后面指定了字串宽度时占位用. 不填时的默认占位符是空格.
+        (3) 对齐标识: 在指定了字串宽度时, 默认为右对齐, 增加-号可以改为左对齐.
+        (4) 宽度数值
+        (5) 小数位数/字串裁切: 在宽度数值后增加的小数部分n, 若后接f(浮点数转义符, 如%6.3f)则设定该浮点数的小数只保留n位, 若后接s(字符串转义符, 如%5.3s)则设定该字符串只显示前n位
+     例子:
+        string1 = &quot;Lua&quot;
+        string2 = &quot;Tutorial&quot;
+        number1 = 10
+        number2 = 20
+        -- 基本字符串格式化
+        print(string.format(&quot;基本格式化 %s %s&quot;,string1,string2))
+        -- 日期格式化
+        date = 2; month = 1; year = 2014
+        print(string.format(&quot;日期格式化 %02d/%02d/%03d&quot;, date, month, year))
+        -- 十进制格式化
+        print(string.format(&quot;%.4f&quot;,1/3))
+4. 字符与整数相互转换  
+     -- 字符转换
+     -- 转换第一个字符
+     print(string.byte(&quot;Lua&quot;))
+     -- 转换第三个字符
+     print(string.byte(&quot;Lua&quot;,3))
+     -- 转换末尾第一个字符
+     print(string.byte(&quot;Lua&quot;,-1))
+     -- 第二个字符
+     print(string.byte(&quot;Lua&quot;,2))
+     -- 转换末尾第二个字符
+     print(string.byte(&quot;Lua&quot;,-2))
+     -- 整数 ASCII 码转换为字符
+     print(string.char(97))   
+</code></pre>
+<h5><span id="字符串正则表达式">字符串–正则表达式</span></h5>
+<pre><code> Lua 中的匹配模式直接用常规的字符串来描述。 它用于模式匹配函数 string.find, string.gmatch, string.gsub, string.match。
+ 你还可以在模式串中使用字符类。
+ 字符类指可以匹配一个特定字符集合内任何字符的模式项。比如，字符类%d匹配任意数字。所以你可以使用模式串 '%d%d/%d%d/%d%d%d%d' 搜索 dd/mm/yyyy 格式的日期：
+ 下面的表列出了Lua支持的所有字符类：
+ 单个字符(除 ^$()%.[]*+-? 外): 与该字符自身配对
+ .(点): 与任何字符配对
+ %a: 与任何字母配对
+ %c: 与任何控制符配对(例如\n)
+ %d: 与任何数字配对
+ %l: 与任何小写字母配对
+ %p: 与任何标点(punctuation)配对
+ %s: 与空白字符配对
+ %u: 与任何大写字母配对
+ %w: 与任何字母/数字配对
+ %x: 与任何十六进制数配对
+ %z: 与任何代表0的字符配对
+ %x(此处x是非字母非数字字符): 与字符x配对. 主要用来处理表达式中有功能的字符(^$()%.[]*+-?)的配对问题, 例如%%与%配对
+ [数个字符类]: 与任何[]中包含的字符类配对. 例如[%w_]与任何字母/数字, 或下划线符号(_)配对
+ [^数个字符类]: 与任何不包含在[]中的字符类配对. 例如[^%s]与任何非空白字符配对        
+ 
+ 当上述的字符类用大写书写时, 表示与非此字符类的任何字符配对. 例如, %S表示与任何非空白字符配对.例如，'%A'非字母的字符:
+ &gt; print(string.gsub(&quot;hello, up-down!&quot;, &quot;%A&quot;, &quot;.&quot;))
+ hello..up.down.    4
+ 数字4不是字符串结果的一部分，他是gsub返回的第二个结果，代表发生替换的次数。
+ 在模式匹配中有一些特殊字符，他们有特殊的意义，Lua中的特殊字符如下：
+ ( ) . % + - * ? [ ^ $
+ '%' 用作特殊字符的转义字符，因此 '%.' 匹配点；'%%' 匹配字符 '%'。转义字符 '%'不仅可以用来转义特殊字符，还可以用于所有的非字母的字符。
+  
+  模式条目可以是：
+      单个字符类匹配该类别中任意单个字符；
+      单个字符类跟一个 '*'， 将匹配零或多个该类的字符。 这个条目总是匹配尽可能长的串；
+      单个字符类跟一个 '+'， 将匹配一或更多个该类的字符。 这个条目总是匹配尽可能长的串；
+      单个字符类跟一个 '-'， 将匹配零或更多个该类的字符。 和 '*' 不同， 这个条目总是匹配尽可能短的串；
+      单个字符类跟一个 '?'， 将匹配零或一个该类的字符。 只要有可能，它会匹配一个；
+      %n， 这里的 n 可以从 1 到 9； 这个条目匹配一个等于 n 号捕获物（后面有描述）的子串。
+      %bxy， 这里的 x 和 y 是两个明确的字符； 这个条目匹配以 x 开始 y 结束， 且其中 x 和 y 保持 平衡 的字符串。 意思是，如果从左到右读这个字符串，对每次读到一个 x 就 +1 ，读到一个 y 就 -1， 最终结束处的那个 y 是第一个记数到 0 的 y。 举个例子，条目 %b() 可以匹配到括号平衡的表达式。
+      %f[set]， 指 边境模式； 这个条目会匹配到一个位于 set 内某个字符之前的一个空串， 且这个位置的前一个字符不属于 set 。 集合 set 的含义如前面所述。 匹配出的那个空串之开始和结束点的计算就看成该处有个字符 '\0' 一样。
+  模式：
+    模式 指一个模式条目的序列。 在模式最前面加上符号 '^' 将锚定从字符串的开始处做匹配。 在模式最后面加上符号 '$' 将使匹配过程锚定到字符串的结尾。 如果 '^' 和 '$' 出现在其它位置，它们均没有特殊含义，只表示自身。
+  捕获：
+    模式可以在内部用小括号括起一个子模式； 这些子模式被称为 捕获物。 当匹配成功时，由 捕获物 匹配到的字符串中的子串被保存起来用于未来的用途。 捕获物以它们左括号的次序来编号。 例如，对于模式 &quot;(a*(.)%w(%s*))&quot; ， 字符串中匹配到 &quot;a*(.)%w(%s*)&quot; 的部分保存在第一个捕获物中 （因此是编号 1 ）； 由 &quot;.&quot; 匹配到的字符是 2 号捕获物， 匹配到 &quot;%s*&quot; 的那部分是 3 号。
+  作为一个特例，空的捕获 () 将捕获到当前字符串的位置（它是一个数字）。 例如，如果将模式 &quot;()aa()&quot; 作用到字符串 &quot;flaaap&quot; 上，将产生两个捕获物： 3 和 5 。
+</code></pre>
+<h4><span id="table表">table(表)</span></h4>
+<pre><code>在 Lua 里，table 的创获取数据的类型建是通过&quot;构造表达式&quot;来完成，最简单构造表达式是{}，用来创建一个空表
+也可以在表里添加一些数据，直接初始化表:
+1. 初始化表与移除引用
+    -- 创建一个空的 table
+    local tbl1 = {}         
+    -- 直接初始表
+    local tbl2 = {&quot;apple&quot;, &quot;pear&quot;, &quot;orange&quot;, &quot;grape&quot;}
+    -- 初始化表
+    mytable = {} 
+    -- 指定值
+    mytable[1]= &quot;Lua&quot;
+    -- 移除引用
+    mytable = nil
+    -- lua 垃圾回收会释放内存
+
+2. -- 创建一个空的 table
+   local tbl1 = {}
+   -- 直接初始表
+   local tbl2 = {&quot;apple&quot;, &quot;pear&quot;, &quot;orange&quot;, &quot;grape&quot;}
+
+3. Lua 中的表（table）其实是一个&quot;关联数组&quot;（associative arrays），数组的索引可以是数字或者是字符串
+  table 不会固定长度大小，有新数据添加时 table 长度会自动增长，没初始的 table 都是 nil。
+  重点: 不同于其他语言的数组把 0 作为数组的初始索引，在 Lua 里表的默认初始索引一般以 1 开始  
+        local tbl = {&quot;apple&quot;, &quot;pear&quot;, &quot;orange&quot;, &quot;grape&quot;}
+        for key, val in pairs(tbl) do
+           print(&quot;Key&quot;, key)
+        end
+4. 索引,对 table 的索引使用方括号 []。Lua 也提供了&quot;.&quot;操作
+    &gt; site = {}
+    &gt; site[&quot;key&quot;] = &quot;www.w3cschool.cc&quot;
+    &gt; print(site[&quot;key&quot;])
+    www.w3cschool.cc
+    &gt; print(site.key)
+    www.w3cschool.cc
+    
+5. ipairs和pairs的区别
+    为了看出两者的区别，首先定义一个table:
+    a={&quot;Hello&quot;,&quot;World&quot;;a=1,b=2,z=3,x=10,y=20;&quot;Good&quot;,&quot;Bye&quot;}  
+    for i, v in ipairs(a) do
+    	print(v)
+    end
+    输出的结果是：
+    Hello
+    World
+    Good
+    Bye
+    可见ipairs并不会输出table中存储的键值对，会跳过键值对，然后按顺序输出table中的值。
+    再使用pairs对其进行遍历：
+    for i, v in pairs(a) do
+    	print(v)
+    end
+    输出的结果是：
+    Hello 
+    World 
+    Good  
+    Bye   
+    1     
+    10    
+    2     
+    20    
+    3     
+    可见pairs会输出table中的值和键值对，并且在输出的过程中先按顺序输出值，再乱序输出键值对。
+    这是因为table在存储值的时候是按照顺序的，但是在存储键值对的时候是按照键的哈希值存储的，
+    并不会按照键的字母顺序或是数字顺序存储。
+    对于a来说，如果执行print(a[3]),输出的结果也会是Good。也就是说table并不会给键值对一个索引值。
+    
+    也就是说ipairs只是按照索引值顺序，打印出了table中有索引值的数据，没有索引值的不管。
+    而pairs是先按照数组索引值打印，打印完成后再按照哈希键值对的键的哈希值打印它的值。
+    
+    
+    LuaJIT 2.1  新增加的 table.new 和 table.clear 函数是非常有用的。
+    前者主要用来预分配 Lua table 空间，后者主要用来高效的释放 table 空间，并且它们都是可以被 JIT 编译的。
+</code></pre>
+<h5><span id="table-操作">table – 操作</span></h5>
+<pre><code>1.table.concat (table [, sep [, start [, end]]]):concat是concatenate(连锁, 连接)的缩写. table.concat()函数列出参数中指定table的数组部分从start位置到end位置的所有元素, 元素间以指定的分隔符(sep)隔开。
+2.table.insert (table, [pos,] value):在table的数组部分指定位置(pos)插入值为value的一个元素. pos参数可选, 默认为数组部分末尾.
+3.table.remove (table [, pos]):返回table数组部分位于pos位置的元素. 其后的元素会被前移. pos参数可选, 默认为table长度, 即从最后一个元素删起。
+4.table.sort (table [, comp]):对给定的table进行升序排序
+</code></pre>
+<h5><span id="table-table间连接table中的插入移除排序">table – table间连接,table中的插入,移除,排序</span></h5>
+<pre><code>使用 concat() 方法来连接两个 table
+    fruits = {&quot;banana&quot;,&quot;orange&quot;,&quot;apple&quot;}
+    -- 返回 table 连接后的字符串
+    print(&quot;连接后的字符串 &quot;,table.concat(fruits)
+    -- 指定连接字符
+    print(&quot;连接后的字符串 &quot;,table.concat(fruits,&quot;, &quot;))
+    -- 指定索引来连接 table
+    print(&quot;连接后的字符串 &quot;,table.concat(fruits,&quot;, &quot;, 2,3))
+    
+    fruits = {&quot;banana&quot;,&quot;orange&quot;,&quot;apple&quot;}
+    -- 在末尾插入
+    table.insert(fruits,&quot;mango&quot;)
+    print(&quot;索引为 4 的元素为 &quot;,fruits[4])
+    
+    -- 在索引为 2 的键处插入
+    table.insert(fruits,2,&quot;grapes&quot;)
+    print(&quot;索引为 2 的元素为 &quot;,fruits[2])
+    
+    print(&quot;最后一个元素为 &quot;,fruits[5])
+    table.remove(fruits)
+    print(&quot;移除后最后一个元素为 &quot;,fruits[5])    
+    
+    --排序
+    fruits = {&quot;banana&quot;,&quot;orange&quot;,&quot;apple&quot;,&quot;grapes&quot;}
+    print(&quot;排序前&quot;)
+    for k,v in ipairs(fruits) do
+        print(k,v)
+    end
+    
+    table.sort(fruits)
+    print(&quot;排序后&quot;)
+    for k,v in ipairs(fruits) do
+        print(k,v)
+    end
+</code></pre>
+<h5><span id="table-数组">table – 数组</span></h5>
+<pre><code>1. 一维数组
+    array = {&quot;Lua&quot;, &quot;Tutorial&quot;}
+    
+    for i= 0, 2 do
+       print(array[i])
+    end
+2. 多维数组
+     -- 初始化数组
+     array = {}
+     for i=1,3 do
+        array[i] = {}
+           for j=1,3 do
+              array[i][j] = i*j
+           end
+     end
+     
+     -- 访问数组
+     for i=1,3 do
+        for j=1,3 do
+           print(array[i][j])
+        end
+     end   
+</code></pre>
+<h4><span id="function函数">function（函数）</span></h4>
+<pre><code>1.在 Lua 中，函数是被看作是&quot;一类公民（First-Class Value）&quot;
+    function factorial1(n)
+        if n == 0 then
+            return 1
+        else
+            return n * factorial1(n - 1)
+        end
+    end
+    print(factorial1(5))
+    factorial2 = factorial1
+    print(factorial2(5))
+ 
+2.function 可以以匿名函数（anonymous function）的方式通过参数传递
+    -- function_test2.lua 脚本文件
+    function testFun(tab,fun)
+        for k ,v in pairs(tab) do
+            print(fun(k,v));
+        end
+    end
+    
+    
+    tab={key1=&quot;val1&quot;,key2=&quot;val2&quot;};
+    testFun(tab,
+    function(key,val)--匿名函数
+        return key..&quot;=&quot;..val;
+    end
+    );  
+3. 多返回值
+    Lua函数中，在return后列出要返回的值的列表即可返回多值
+        function maximum (a)
+            local mi = 1             -- 最大值索引
+            local m = a[mi]          -- 最大值
+            for i,val in ipairs(a) do
+               if val &gt; m then
+                   mi = i
+                   m = val
+               end
+            end
+            return m, mi
+        end
+        
+        print(maximum({8,10,23,12,5}))     
+</code></pre>
+<h5><span id="函数定义">函数定义</span></h5>
+<pre><code>optional_function_scope function function_name( argument1, argument2, argument3..., argumentn)
+    function_body
+    return result_params_comma_separated
+end
+
+optional_function_scope: 该参数是可选的制定函数是全局函数还是局部函数，未设置该参数默认为全局函数，如果你需要设置函数为局部函数需要使用关键字 local。
+function_name: 指定函数名称。
+argument1, argument2, argument3..., argumentn: 函数参数，多个参数以逗号隔开，函数也可以不带参数。
+function_body: 函数体，函数中需要执行的代码语句块。
+result_params_comma_separated: 函数返回值，Lua语言函数可以返回多个值，每个值以逗号隔开。
+</code></pre>
+<h5><span id="函数的可变参数">函数的可变参数</span></h5>
+<pre><code>   1. 在函数参数列表中使用三点 ... 表示函数有可变的参数
+        function add(...)  
+        local s = 0  
+          for i, v in ipairs{...} do   --&gt; {...} 表示一个由所有变长参数构成的数组  
+            s = s + v  
+          end  
+          return s  
+        end  
+        print(add(3,4,5,6,7))  ---&gt;25
+   2. select(&quot;#&quot;,...) 来获取可变参数的数量
+            function average(...)
+               result = 0
+               local arg={...}
+               for i,v in ipairs(arg) do
+                  result = result + v
+               end
+               print(&quot;总共传入 &quot; .. select(&quot;#&quot;,...) .. &quot; 个数&quot;)
+               return result/select(&quot;#&quot;,...)
+            end
+            
+            print(&quot;平均值为&quot;,average(10,5,3,4,5,6))
+        
+        在遍历变长参数的时候只需要使用 {…}，然而变长参数可能会包含一些 nil，那么就可以用 select 函数来访问变长参数了：select('#', …) 或者 select(n, …)
+        select('#', …) 返回可变参数的长度
+        select(n, …) 用于访问 n 到 select('#',…) 的参数
+        调用select时，必须传入一个固定实参selector(选择开关)和一系列变长参数。如果selector为数字n,那么select返回它的第n个可变实参，否则只能为字符串&quot;#&quot;,这样select会返回变长参数的总数
+            do  
+                function foo(...)  
+                    for i = 1, select('#', ...) do  --&gt;获取参数总数
+                        local arg = select(i, ...); --&gt;读取参数
+                        print(&quot;arg&quot;, arg);  
+                    end  
+                end  
+              
+                foo(1, 2, 3, 4);  
+            end
+</code></pre>
+<h4><span id="thread线程">thread(线程)</span></h4>
+<pre><code>在 Lua 里，最主要的线程是协同程序（coroutine）。
+协程跟线程（thread）差不多，拥有自己独立的栈、局部变量和指令指针，可以跟其他协同程序共享全局变量和其他大部分东西。
+线程跟协程的区别：线程可以同时多个运行，而协程任意时刻只能运行一个，并且处于运行状态的协程只有被挂起（suspend）时才会暂停。
+</code></pre>
+<h4><span id="userdata自定义类型">userdata(自定义类型)</span></h4>
+<pre><code>userdata 是一种用户自定义数据，用于表示一种由应用程序或 C/C++ 语言库所创建的类型，可以将任意 C/C++ 的任意数据类型的数据（通常是 struct 和 指针）存储到 Lua 变量中调用。
+</code></pre>
+
+
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2018/12/20/微服务API网关框架-4/" data-toggle="tooltip" data-placement="top" title="微服务API网关框架(4)--Lua 运算符,循环,迭代器与流程控制">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/2018/12/19/微服务API网关框架-2/" data-toggle="tooltip" data-placement="top" title="微服务API网关框架(2)--Nginx的使用">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                    <div class="comment">
+                        <div id="disqus_thread" class="disqus-thread"></div>
+                    </div>
+                
+                <!-- disqus comment end -->
+            </div>
+
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Lua基本语法</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.0.1.</span> <span class="toc-nav-text">编程模式</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.0.2.</span> <span class="toc-nav-text">注释</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.0.3.</span> <span class="toc-nav-text">标示符</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.0.4.</span> <span class="toc-nav-text">关键词</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.0.4.1.</span> <span class="toc-nav-text">return 和 break 关键字</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.0.5.</span> <span class="toc-nav-text">变量</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.0.5.1.</span> <span class="toc-nav-text">赋值</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.0.6.</span> <span class="toc-nav-text">数据类型</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.0.6.1.</span> <span class="toc-nav-text">获取数据的类型</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.0.6.2.</span> <span class="toc-nav-text">获取当前变量的数据类型是否与设想的一致</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.0.6.3.</span> <span class="toc-nav-text">nil (空值)</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.0.6.4.</span> <span class="toc-nav-text">boolean(布尔值)</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.0.6.5.</span> <span class="toc-nav-text">number(数字)</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.0.6.6.</span> <span class="toc-nav-text">string(字符串)</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-5"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.0.6.6.1.</span> <span class="toc-nav-text">字符串用法拓展</span></a></li><li class="toc-nav-item toc-nav-level-5"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.0.6.6.2.</span> <span class="toc-nav-text">字符串–正则表达式</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.0.6.7.</span> <span class="toc-nav-text">table(表)</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-5"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.0.6.7.1.</span> <span class="toc-nav-text">table – 操作</span></a></li><li class="toc-nav-item toc-nav-level-5"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.0.6.7.2.</span> <span class="toc-nav-text">table – table间连接,table中的插入,移除,排序</span></a></li><li class="toc-nav-item toc-nav-level-5"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.0.6.7.3.</span> <span class="toc-nav-text">table – 数组</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.0.6.8.</span> <span class="toc-nav-text">function（函数）</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-5"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.0.6.8.1.</span> <span class="toc-nav-text">函数定义</span></a></li><li class="toc-nav-item toc-nav-level-5"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.0.6.8.2.</span> <span class="toc-nav-text">函数的可变参数</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.0.6.9.</span> <span class="toc-nav-text">thread(线程)</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.0.6.10.</span> <span class="toc-nav-text">userdata(自定义类型)</span></a></li></ol></li></ol></li></ol>
+        
+        </div>
+      </aside>
+    
+
+
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">标签</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#微服务API网关" title="微服务API网关">微服务API网关</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>友情链接</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://ewanvalentine.io/" target="_blank">Ewan Valentine</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<!-- disqus embedded js code start (one page only need to embed once) -->
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = "your-disqus-ID";
+    var disqus_identifier = "https://www.nebula-x.cn/2018/12/20/微服务API网关框架-3/";
+    var disqus_url = "https://www.nebula-x.cn/2018/12/20/微服务API网关框架-3/";
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<!-- disqus embedded js code start end -->
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/zhao-xian-sheng-78-18">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/2168119754">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://github.com/nebula-x">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; 招景滔 2018 - 2019 <a href="https://www.nebula-x.cn/"><a href="http://www.miibeian.gov.cn">粤ICP备17077628号-2</a></a>
+                    <br>
+                    Theme by <a href="http://beantech.org">BeanTech</a>
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span>
+                    re-Ported by <a href="https://www.nebula-x.cn/">Nebula-X</a> |
+                    <iframe style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0" width="91px" height="20px" src="https://ghbtns.com/github-btn.html?user=nebula-x&repo=nebula-x.hexo&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!--
+     Because of the native support for backtick-style fenced code blocks
+     right within the Markdown is landed in Github Pages,
+     From V1.6, There is no need for Highlight.js,
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://www.nebula-x.cn/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-XXXXXXXX-X';
+    var _gaDomain = 'yoursite';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+<!-- Image to hack wechat -->
+<img src="https://www.nebula-x.cn/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>

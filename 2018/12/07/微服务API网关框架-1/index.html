@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword" content="">
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <title>
+        
+          微服务API网关框架(1)--介绍 - Nebula-X | 星云数联
+        
+    </title>
+
+    <link rel="canonical" href="https://www.nebula-x.cn/2018/12/07/微服务API网关框架-1/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('Demo.png')
+            /*post*/
+        
+    }
+    
+    #signature{
+        background-image: url('/img/signature/nebula-white.png');
+    }
+    
+</style>
+
+<header class="intro-header">
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#微服务API网关" title="微服务API网关">微服务API网关</a>
+                            
+                        </div>
+                        <h1>微服务API网关框架(1)--介绍</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by 招景滔 on
+                            2018-12-07
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">星云数联</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">关于我</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">归档</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">书签</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <h1><span id="概念介绍">概念介绍</span></h1>
+<h3><span id="网关作用">网关作用</span></h3>
+<pre><code>统一入口
+安全：黑名单、权限身份认证
+限流：实现微服务访问流量计算，基于流量计算分析进行限流，可以定义多种限流规则。
+缓存：数据缓存
+日志：日志记录
+监控：记录请求响应数据，api耗时分析，性能监控
+重试：异常重试
+熔断：降级 (防止服务雪崩)
+</code></pre>
+<h3><span id="api网关">API网关</span></h3>
+<pre><code>API网关是一个服务器，是系统的唯一入口。从面向对象设计的角度看，它与外观模式类似。
+API网关封装了系统内部架构，为每个客户端提供一个定制的API。它可能还具有其它职责，
+如身份验证、监控、负载均衡、缓存、请求分片与管理、静态响应处理。
+
+API网关方式的核心要点是，所有的客户端和消费端都通过统一的网关接入微服务，
+在网关层处理所有的非业务功能。通常，网关也是提供REST/HTTP的访问API。
+服务端通过API-GW注册和管理服务。
+</code></pre>
+<h3><span id="api网关种类">API网关种类</span></h3>
+<ol>
+<li>单节点网关<br>
+<img src="%E5%8D%95%E8%8A%82%E7%82%B9%E5%9C%BA%E6%99%AF%E7%BD%91%E5%85%B3.png" alt="单节点场景网关"><br>
+2.多节点网关<br>
+<img src="%E5%A4%9A%E8%8A%82%E7%82%B9%E5%9C%BA%E6%99%AF%E7%BD%91%E5%85%B3.png" alt="多节点场景网关"></li>
+</ol>
+<h4><span id="api网关网关的价值">API网关网关的价值</span></h4>
+<pre><code>网关层对外部和内部进行了隔离，保障了后台服务的安全性。 
+对外访问控制由网络层面转换成了运维层面，减少变更的流程和错误成本 
+减少客户端与服务的耦合，服务可以独立发展。通过网关层来做映射。 
+通过网关层聚合，减少外部访问的频次，提升访问效率。 
+节约后端服务开发成本，减少上线风险。 
+为服务熔断，灰度发布，线上测试提供简单方案。
+</code></pre>
+<h2><span id="开源微服务项目">开源微服务项目</span></h2>
+<pre><code>Dubbo
+Spring Cloud
+</code></pre>
+<h2><span id="开源网关项目">开源网关项目</span></h2>
+<pre><code>Tyk：Tyk是一个开放源码的API网关，它是快速、可扩展和现代的。Tyk提供了一个API管理平台，其中包括API网关、
+     API分析、开发人员门户和API管理面板。Try 是一个基于Go实现的网关服务。
+Kong：Kong是一个可扩展的开放源码API Layer(也称为API网关或API中间件)。Kong 在任何RESTful API的前面运行，通过插件扩展，它提供了超越核心平台的额外功能和服务。
+Orange：和Kong类似也是基于OpenResty的一个API网关程序，是由国人开发的。
+Netflix zuul：Zuul是一种提供动态路由、监视、弹性、安全性等功能的边缘服务。Zuul是Netflix出品的一个基于JVM路由和服务端的负载均衡器。
+apiaxle: Nodejs 实现的一个 API 网关。
+api-umbrella: Ruby 实现的一个 API 网关。
+</code></pre>
+<h2><span id="网关技术选型">网关技术选型</span></h2>
+<pre><code>kong 
+    包含功能
+    (
+        统一入口
+        安全：黑名单、权限身份认证
+        限流：实现微服务访问流量计算，基于流量计算分析进行限流，可以定义多种限流规则。
+        缓存：数据缓存
+        日志：日志记录
+        监控：记录请求响应数据，api耗时分析，性能监控
+    )
+Zuul
+    包含功能
+    (
+        重试
+        熔断
+    )
+    
+kong 是基于Nginx + Lua模式开发出来的，我们将要自己搭建一个属于自己的网关，所以采用Nginx + Lua，真实部署的时候可以
+采用kong+zuul的模式进行实际部署，因为自己搭建的需要考虑的问题有很多，当然自己构建的话，灵活性和个性化设置也是可以控制的，
+这个需要看看团队的实际需要，客观进行评估.
+</code></pre>
+<h3><span id="架构实现图">架构实现图</span></h3>
+<p><img src="%E6%9E%B6%E6%9E%84.png" alt="架构"><br>
+<img src="%E6%9E%B6%E6%9E%842.png" alt="架构2"><br>
+<img src="%E6%9E%B6%E6%9E%843.png" alt="架构3"></p>
+<h3><span id="项目运行环境">项目运行环境</span></h3>
+<pre><code>CentOS
+</code></pre>
+<h3><span id="nginx安装">Nginx安装</span></h3>
+<pre><code>1、Nginx下载：nginx-1.13.0.tar.gz，下载到：/opt/softwares/
+    $ wget http://nginx.org/download/nginx-1.13.0.tar.gz
+2、Nginx解压安装：
+    $ tar -zxvf nginx-1.13.0.tar.gz -C ./
+3、预先安装(nginx所需要的运行库)
+    $ yum -y install gcc gcc-c++ ncurses-devel perl pcre pcre-devel zlib gzip zlib-devel
+4、Nginx编译
+    $ ./configure --prefix=/usr/local/nginx
+5、安装Nginx：
+    安装命令：make &amp; make install
+6、查看安装路径
+    $ cd /usr/local/nginx
+    $ ll
+    
+    // 文件夹路径解读
+    conf 存放配置文件
+    html 网页文件
+    logs 存放日志
+    sbin   shell启动、停止等脚本
+7、启动nginx
+    $ cd sbin
+    $ ./nginx
+8、浏览器，访问ip地址，默认80端口
+    http://127.0.0.1
+9、停止nginx
+    // 查询nginx的状态
+    $ ps -ef | grep nginx
+    执行命令：$ kill –INT 进程号
+    $ kill -INT 3844
+
+    $ ./nginx -s stop
+
+10、重新读取配置文件
+    $ nginx -s reload
+
+11、检查配置文件是否正确
+$ ./nginx -t
+
+问题报错：[error] invalid PID number &quot;&quot; in &quot;/usr/local/nginx/logs/nginx.pid&quot;
+
+解决方案:
+// 注意: -c 带的文件路径必须是绝对路径，相对路径是不行的
+# /usr/local/nginx/sbin/nginx -c /usr/local/nginx/conf/nginx.conf
+    -c的命令是指定配置文件位置
+</code></pre>
+<h2><span id="代理">代理</span></h2>
+<h3><span id="正向代理">正向代理</span></h3>
+<pre><code>用户要访问服务器C，但因为网络原因无法访问，但是服务器A可以访问服务器C，这样可以把服务器A设置为正向代理服务器
+由服务器A去请求服务器C，然后服务器A把数据返回给客户
+</code></pre>
+<p><img src="%E6%AD%A3%E5%90%91%E4%BB%A3%E7%90%86.png" alt="正向代理"></p>
+<h3><span id="反向代理">反向代理</span></h3>
+<pre><code>用户需要访问一些服务器应用，但对方不想把服务器应用地址暴露给用户，这样可以确保安全。那客户如果访问，可以通过反向代理
+服务器，用户只需要知道反向代理服务器地址就可以了，最后反向代理服务器去访问服务器的应用
+</code></pre>
+<p><img src="%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86.png" alt="反向代理"></p>
+<h3><span id="总结-正向代理与反向代理的区别">总结: 正向代理与反向代理的区别</span></h3>
+<pre><code>(1)正向代理是需要在用户的电脑上，配置正向服务代理器的；而反向代理则不需要，因为用户是直接访问反向代理器的
+(2)正向代理的应用场景是用户是知道目标服务器地址，如:http://www.baidu.com,但是不能直接的访问，那么就需要在电脑配置一个正向
+    代理服务器，用户再次访问的地址就是www.google.com
+    而反向代理的应用场景是，用户本来就是不知道目标服务器的地址，而是由平台方提供一个反向代理服务器的地址，
+    用户直接访问反向代理服务器的地址就行了，www.a.com
+    不管目标服务器有多少，用户是不需要关心的，只要访问反向代理服务器就OK，由反向代理服务器去解析访问目标服务器
+(3)反向代理，极大的保护了应用的安全性，而且此结构能够很好的搭建负载均衡
+</code></pre>
+
+
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2018/12/19/微服务API网关框架-2/" data-toggle="tooltip" data-placement="top" title="微服务API网关框架(2)--Nginx的使用">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/2018/11/21/RabbitMQ学习-2-队列模型/" data-toggle="tooltip" data-placement="top" title="RabbitMQ学习(2)--队列模型">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                    <div class="comment">
+                        <div id="disqus_thread" class="disqus-thread"></div>
+                    </div>
+                
+                <!-- disqus comment end -->
+            </div>
+
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">概念介绍</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.0.1.</span> <span class="toc-nav-text">网关作用</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.0.2.</span> <span class="toc-nav-text">API网关</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.0.3.</span> <span class="toc-nav-text">API网关种类</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.0.3.1.</span> <span class="toc-nav-text">API网关网关的价值</span></a></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">开源微服务项目</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">开源网关项目</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.3.</span> <span class="toc-nav-text">网关技术选型</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.3.1.</span> <span class="toc-nav-text">架构实现图</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.3.2.</span> <span class="toc-nav-text">项目运行环境</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.3.3.</span> <span class="toc-nav-text">Nginx安装</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.4.</span> <span class="toc-nav-text">代理</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.4.1.</span> <span class="toc-nav-text">正向代理</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.4.2.</span> <span class="toc-nav-text">反向代理</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.4.3.</span> <span class="toc-nav-text">总结: 正向代理与反向代理的区别</span></a></li></ol></li></ol>
+        
+        </div>
+      </aside>
+    
+
+
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">标签</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#微服务API网关" title="微服务API网关">微服务API网关</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>友情链接</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://ewanvalentine.io/" target="_blank">Ewan Valentine</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<!-- disqus embedded js code start (one page only need to embed once) -->
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = "your-disqus-ID";
+    var disqus_identifier = "https://www.nebula-x.cn/2018/12/07/微服务API网关框架-1/";
+    var disqus_url = "https://www.nebula-x.cn/2018/12/07/微服务API网关框架-1/";
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<!-- disqus embedded js code start end -->
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/zhao-xian-sheng-78-18">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/2168119754">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://github.com/nebula-x">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; 招景滔 2018 - 2019 <a href="https://www.nebula-x.cn/"><a href="http://www.miibeian.gov.cn">粤ICP备17077628号-2</a></a>
+                    <br>
+                    Theme by <a href="http://beantech.org">BeanTech</a>
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span>
+                    re-Ported by <a href="https://www.nebula-x.cn/">Nebula-X</a> |
+                    <iframe style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0" width="91px" height="20px" src="https://ghbtns.com/github-btn.html?user=nebula-x&repo=nebula-x.hexo&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!--
+     Because of the native support for backtick-style fenced code blocks
+     right within the Markdown is landed in Github Pages,
+     From V1.6, There is no need for Highlight.js,
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://www.nebula-x.cn/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-XXXXXXXX-X';
+    var _gaDomain = 'yoursite';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+<!-- Image to hack wechat -->
+<img src="https://www.nebula-x.cn/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>
